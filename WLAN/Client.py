@@ -1,14 +1,15 @@
 import sys
+import os
 import json
 from __core import executeAndGetLines
 from __core import executeNonQuery
-
+from __core import xmlToDict
 
 #----------------------------------------------------------------------
 #List Profiles
 
 def listProfiles():
-    out = executeAndGetLines("netsh wlan show profile")
+    out = executeAndGetLines("netsh wlan show profiles")
     OutStructure = __buildProfileStructure(out)
     print(OutStructure)
     return out
@@ -29,6 +30,37 @@ def __buildProfileStructure(lines):
                 cnt -=1
             lines = lines[cnt:]
     return json.dumps({Heading:Structure})
+
+#----------------------------------------------------------------------
+#save profile config
+def getProfileConfigurations():
+    executeNonQuery("netsh wlan export profile")
+    files = os.listdir(".")
+    files = [x for x in files if x.endswith(".xml")]
+    profiles = []
+    for f in files:
+        try:
+            Structure = xmlToDict("./" + f)
+            profiles.append(json.dumps(Structure))
+            os.remove("./" + f)
+        except IOError:
+            pass
+    return profiles
+
+def getProfileConfiguration(strProfile):
+    executeNonQuery("netsh wlan export profile " + strProfile)
+    files = os.listdir(".")
+    files = [x for x in files if x.endswith(".xml")]
+    profiles = []
+    for f in files:
+        try:
+            Structure = xmlToDict("./" + f)
+            profiles.append(json.dumps(Structure))
+            os.remove("./" + f)
+        except IOError:
+            pass
+    return profiles[0]
+
 #----------------------------------------------------------------------
 #disconnect
 def disconnect():
@@ -38,3 +70,7 @@ def disconnect():
 #connect
 def connectTo(strProfile):
     executeNonQuery("netch wlan connect " + strProfile)
+
+getProfileConfiguration("Catalysts")
+
+
