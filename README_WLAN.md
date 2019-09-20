@@ -14,9 +14,13 @@ from PyNetsh.WLAN import *
   shuts down the WLAN-Connection\
     __returns__ nothing
 
-* getAvilableNetworks()\
+* getAvilableNetworksJSON()\
     Scans for available networks\
     __returns__ a list of JSON-encoded strings 
+
+* getAvilableNetworksList()\
+    Scans for available networks\
+    __returns__ a list of strings containing the names
 
 * getProfileConfiguration(strProfile) \
     Reads the configuration of the specified Profile\
@@ -26,7 +30,11 @@ from PyNetsh.WLAN import *
 * getProfileConfigurations() \
     Reads the configurations of all wifis saved on the computer\
     __returns__ a list of JSON-encoded strings     
-
-* listProfiles() \
+    
+* getProfilesJSON() \
   Reads the names of the saved profiles on this computer\
-    __returns__ a list of strings    
+    __returns__ a JSON-string containing the profiles
+
+* getProfilesList() \
+  Reads the names of the saved profiles on this computer\
+    __returns__ a list of strings containing the profiles

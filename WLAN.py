@@ -5,18 +5,24 @@ import json
 from __core import executeAndGetLines
 from __core import executeNonQuery
 from __core import xmlToDict
+from __core import extractFirstElementfromDict
 
 #----------------------------------------------------------------------
 #List Profiles
 
-def listProfiles():
+def getProfilesJSON():
     '''
-    returns a stringlist with the wlan-profiles saved on this computer
+    returns a JSON-string with the wlan-profiles saved on this computer
     '''
     out = executeAndGetLines("netsh wlan show profiles")
     OutStructure = __buildProfileStructure(out)
-    print(OutStructure)
-    return out
+    return OutStructure
+
+def getProfilesList():
+    '''
+    returns a list of strings with the wlan-profiles saved on this computer    
+    '''
+    return __getProfilesJSONToList(getProfilesJSON())
 
 def __buildProfileStructure(lines):
     Heading = lines[0]
@@ -35,29 +41,36 @@ def __buildProfileStructure(lines):
             lines = lines[cnt:]
     return json.dumps({Heading:Structure})
 
+def __getProfilesJSONToList(getProfilesOutput):
+    '''
+    Converts the JSON Output of "getProfiles()" to a list
+    '''
+    getProfilesOutput = json.loads(getProfilesOutput)
+    firstKey = extractFirstElementfromDict(getProfilesOutput)
+    curStruct = getProfilesOutput[firstKey]
+    profileList = []
+    for key in curStruct:
+        for elem in curStruct[key]:
+            if elem != "<None>":
+                profileList.append(elem)
+    return profileList
+
+
 #----------------------------------------------------------------------
 #profile config
 def getProfileConfigurations():
     '''
     returns a list of JSON-encoded strings containing the advanced data of each profile on this computer
     '''
-    executeNonQuery("netsh wlan export profile")
-    files = os.listdir(".")
-    files = [x for x in files if x.endswith(".xml")]
-    profiles = []
-    for f in files:
-        try:
-            Structure = xmlToDict("./" + f)
-            profiles.append(json.dumps(Structure))
-            os.remove("./" + f)
-        except IOError:
-            pass
-    return profiles
+    return __abstr_getProfileConfig()
 
 def getProfileConfiguration(strProfile):
     '''
     returns a JSON-encoded string containing the advanced data of the specified Profile
     '''
+    return __abstr_getProfileConfig(strProfile=strProfile)[0]
+
+def __abstr_getProfileConfig(strProfile = ""):
     executeNonQuery("netsh wlan export profile " + strProfile)
     files = os.listdir(".")
     files = [x for x in files if x.endswith(".xml")]
@@ -69,7 +82,7 @@ def getProfileConfiguration(strProfile):
             os.remove("./" + f)
         except IOError:
             pass
-    return profiles[0]
+    return profiles
 
 #----------------------------------------------------------------------
 #disconnect
@@ -85,11 +98,11 @@ def connectTo(strProfile):
     '''
     tries to establish a WLAN-Connection to the specified Profile
     '''
-    executeNonQuery("netch wlan connect " + strProfile)
+    executeNonQuery("netsh wlan connect " + strProfile)
 
 #------------------------------------------------------------------------
 #available profiles
-def getAvilableNetworks():
+def getAvilableNetworksJSON():
     '''
     returns an JSON-encoded list of Strings containing information of available Networks
     '''
@@ -109,9 +122,23 @@ def getAvilableNetworks():
         output = output[4:]
     return Wifis
 
+def getAvilableNetworksList():
+    return __getAvailableNetworkJSONToList(getAvilableNetworksJSON())
 
+def __getAvailableNetworkJSONToList(getProfilesOutput):
+    ProfileList = []
+    for jsonString in getProfilesOutput:
+        ssid = json.loads(jsonString)    
+        firstKey = extractFirstElementfromDict(ssid)
+        ssid = ssid[firstKey]
+        ProfileList.append(ssid["name"])
+    return ProfileList
+
+#------------------------------------------------------------------------
 def __getValuePairFromLine(strLine):
     splitter = strLine.split(":")
     if len(splitter) == 2:
         return splitter[0].strip(), splitter[1].strip()
     else: return None, None
+
+print(getAvilableNetworksJSON())

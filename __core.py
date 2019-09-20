@@ -10,7 +10,7 @@ def execute(cmd):
 
 def executeAndGetLines(cmd):
     out = execute(cmd)
-    strList = stripList(__cleanLinebreaks(out).split("\n"))
+    strList = stripList(out.split("\n"))
     return removeEmpty(strList)
 
 def removeEmpty(strList):
@@ -39,3 +39,5 @@ def __rekXmlIterator(treeElement, inputStructure):
             __rekXmlIterator(node, inputStructure[tag])
         else: inputStructure[tag] = node.text
 
+def extractFirstElementfromDict(inputDict):
+    return list(inputDict.keys())[0]
