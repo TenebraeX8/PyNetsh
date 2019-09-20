@@ -83,7 +83,7 @@ def disconnect():
 #connect
 def connectTo(strProfile):
     '''
-    starts up a WLAN-Connection to the specified Profile
+    tries to establish a WLAN-Connection to the specified Profile
     '''
     executeNonQuery("netch wlan connect " + strProfile)
 
