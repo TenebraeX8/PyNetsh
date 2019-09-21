@@ -6,7 +6,13 @@ def executeNonQuery(cmd):
     _ =subprocess.getoutput(cmd)
 
 def execute(cmd):
-    return __cleanLinebreaks(subprocess.check_output(cmd, shell=True).decode("utf-8"))
+    binOut = subprocess.check_output(cmd, shell=True)
+    strOut = ""
+    try:
+        strOut = binOut.decode("utf-8")
+    except:
+        strOut = binOut.decode("latin-1")
+    return __cleanLinebreaks(strOut)
 
 def executeAndGetLines(cmd):
     out = execute(cmd)

@@ -140,5 +140,3 @@ def __getValuePairFromLine(strLine):
     if len(splitter) == 2:
         return splitter[0].strip(), splitter[1].strip()
     else: return None, None
-
-print(getAvilableNetworksJSON())
