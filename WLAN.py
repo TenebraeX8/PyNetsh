@@ -2,6 +2,7 @@ import os
 import sys
 sys.path.append(os.path.dirname(__file__))
 import json
+from __core import execute
 from __core import executeAndGetLines
 from __core import executeNonQuery
 from __core import xmlToDict
@@ -33,7 +34,9 @@ def __buildProfileStructure(lines):
             Structure[lines[0]] = []
             cnt = 2
             while cnt < len(lines) and not lines[cnt].startswith("-----") :
-                Structure[lines[0]].append(lines[cnt])
+                strLine = lines[cnt]
+                if strLine.find(":") >= 0: _, strLine = __getValuePairFromLine(strLine)
+                Structure[lines[0]].append(strLine)
                 cnt+=1
             if cnt != len(lines):
                 Structure[lines[0]] = Structure[lines[0]][:-1]
@@ -51,7 +54,7 @@ def __getProfilesJSONToList(getProfilesOutput):
     profileList = []
     for key in curStruct:
         for elem in curStruct[key]:
-            if elem != "<None>":
+            if elem != "<None>" and elem != "<Kein>":
                 profileList.append(elem)
     return profileList
 
@@ -62,26 +65,29 @@ def getProfileConfigurations():
     '''
     returns a list of JSON-encoded strings containing the advanced data of each profile on this computer
     '''
-    return __abstr_getProfileConfig()
+    return __abstr_getProfileConfig(profiles = getProfilesList())
 
 def getProfileConfiguration(strProfile):
     '''
     returns a JSON-encoded string containing the advanced data of the specified Profile
     '''
-    return __abstr_getProfileConfig(strProfile=strProfile)[0]
+    return __abstr_getProfileConfig(profiles=[strProfile])[0]
 
-def __abstr_getProfileConfig(strProfile = ""):
-    executeNonQuery("netsh wlan export profile " + strProfile)
-    files = os.listdir(".")
+def __abstr_getProfileConfig(profiles):
+    if not os.path.exists("./tmp/") : os.mkdir("./tmp/")
+    for profile in profiles:
+        exportProfile(profile, "./tmp/")    
+    files = os.listdir("./tmp/")
     files = [x for x in files if x.endswith(".xml")]
     profiles = []
     for f in files:
         try:
-            Structure = xmlToDict("./" + f)
+            Structure = xmlToDict("./tmp/" + f)
             profiles.append(json.dumps(Structure))
-            os.remove("./" + f)
+            os.remove("./tmp/" + f)
         except IOError:
             pass
+    os.rmdir("./tmp/")
     return profiles
 
 #----------------------------------------------------------------------
@@ -133,6 +139,51 @@ def __getAvailableNetworkJSONToList(getProfilesOutput):
         ssid = ssid[firstKey]
         ProfileList.append(ssid["name"])
     return ProfileList
+
+#------------------------------------------------------------------------
+#Connection mode
+def setConnectionMode(strProfile, setToAuto=True):
+    '''
+    updates the connection mode of the specified profile
+    '''
+    strMode = "auto" if setToAuto else "manual"
+    strCmd = 'netsh wlan set profileparameter name="' + strProfile + '" connectionmode=' + strMode
+    executeNonQuery(strCmd)
+
+#------------------------------------------------------------------------
+#profiles
+def deleteProfile(strProfile):
+    '''
+    CAREFULL!!!! This function permanently deletes a profile
+    '''
+    strCmd = 'netsh wlan delete profile name="' + strProfile + '"'
+    executeNonQuery(strCmd)
+
+def exportProfile(strProfile, strPath, clearKey=True):
+    '''
+    exports a profile to a xml-file
+    '''
+    strKey = "key=clear " if clearKey else ""
+    strCorrPath = os.path.normpath(strPath)
+    strCmd = 'netsh wlan export profile name="' + strProfile + '" ' + strKey + 'folder="' + strCorrPath + '"'
+    executeNonQuery(strCmd)
+
+def addProfile(strPath):
+    '''
+    adds a profile to the saved configurations. Configuration has to be an exported .xml file
+    '''
+    strCorrPath = os.path.normpath(strPath)
+    strCmd = 'netsh wlan add profile filename="' + strCorrPath + '"'
+    executeNonQuery(strCmd)
+
+#------------------------------------------------------------------------
+#profiles
+def getDriverReport():
+    '''
+    returns a string with all information available for drivers
+    '''
+    return execute("netsh wlan show drivers")
+
 
 #------------------------------------------------------------------------
 def __getValuePairFromLine(strLine):
