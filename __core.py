@@ -10,7 +10,7 @@ def execute(cmd):
     strOut = ""
     try:
         strOut = binOut.decode("utf-8")
-    except:
+    except UnicodeDecodeError:
         strOut = binOut.decode("latin-1")
     return __cleanLinebreaks(strOut)
 
