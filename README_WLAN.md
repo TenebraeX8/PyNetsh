@@ -63,5 +63,5 @@ from PyNetsh.WLAN import *
 * setConnectionMode(strProfile, setToAuto=True)\
     updates the connection mode of the specified profile\
     __strProfile:__ a string with the profile's name\
-    __setToAuto:__ _[Optional]_ if true, sets the profiles connection mode to auto. Else to manual
+    __setToAuto:__ _[Optional]_ if true, sets the profiles connection mode to auto. Else to manual\
     __returns__ nothing
