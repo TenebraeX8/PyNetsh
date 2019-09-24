@@ -25,5 +25,5 @@ from PyNetsh.Interface import *
 
 
 * def Teredo_configScript():\
-    gets the configuration script of the Teredo Client
-    returns a string\
+    gets the configuration script of the Teredo Client\
+    returns a string
