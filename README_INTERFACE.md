@@ -9,6 +9,7 @@ from PyNetsh.Interface import *
     enables or disables specified interface\
     __strInterface:__ a string with the profile's name\
     __setEnabled:__ _[Optional]_ if true, sets the interface administrative state enabled\
+    __throws__ NotAdminException if user is not administrator\
     __returns__ nothing
 
 * getInterfacesJSON():\
