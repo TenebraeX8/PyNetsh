@@ -1,4 +1,5 @@
 import os
+import ctypes
 import subprocess
 import xml.etree.cElementTree as ET
 
@@ -47,3 +48,14 @@ def __rekXmlIterator(treeElement, inputStructure):
 
 def extractFirstElementfromDict(inputDict):
     return list(inputDict.keys())[0]
+
+def isAdmin():
+    try:
+        is_admin = os.getuid() == 0
+    except AttributeError:
+        is_admin = ctypes.windll.shell32.IsUserAnAdmin() != 0
+    return is_admin
+
+class NotAdminException(Exception):
+    def __init__(self):
+        super().__init__("The requested operation requires elevation (Run as administrator)")
