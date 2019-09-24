@@ -30,7 +30,7 @@ def __buildProfileStructure(lines):
         Headings = __splitByBlanks(lines[0])
         lines = lines[1:]
         if lines[0].find("---------")>=0: lines = lines[1:]
-        if len(lines) > 1:
+        if len(lines) > 0:
             for line in lines:
                 Data = __splitByBlanks(line)
                 if len(Headings) == len(Data):
@@ -89,6 +89,14 @@ def IPv4_configScript():
     '''
     return __abstractConfigScript("ipv4")
 
+def IPv4_globalParameters():
+    '''
+    returns the global parameters encoded in JSON of the IPv4
+    '''
+    output = executeAndGetLines("netsh interface ipv4 show global")[1:] #skip first
+    return json.dumps(__abstractDeconstruct(output))
+
+
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
 #Section IPv6
@@ -97,6 +105,13 @@ def IPv6_configScript():
     returns a string containing the configuration of the IPv6
     '''
     return __abstractConfigScript("ipv6")
+
+def IPv6_globalParameters():
+    '''
+    returns the global parameters encoded in JSON of the IPv6
+    '''
+    output = executeAndGetLines("netsh interface ipv6 show global")[1:] #skip first
+    return json.dumps(__abstractDeconstruct(output))    
 
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
@@ -115,6 +130,13 @@ def tcp_configScript():
     returns a string containing the configuration of the tcp protocol
     '''
     return __abstractConfigScript("tcp")
+
+def tcp_globalParameters():
+    '''
+    returns the global parameters encoded in JSON of the tcp protocol
+    '''
+    output = executeAndGetLines("netsh interface tcp show global")[1:] #skip first
+    return json.dumps(__abstractDeconstruct(output))
 
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
@@ -151,6 +173,22 @@ def Teredo_configScript():
 #----------------------------------------------------------------------
 def __abstractConfigScript(strModule):
     return execute("netsh interface " + strModule + " dump").strip()
+
+def __abstractDeconstruct(listOfLines):
+    outStructure = {}
+    while len(listOfLines) > 0 and listOfLines[0].find(":") < 0:
+        curHeading = listOfLines[0].strip()
+        listOfLines = listOfLines[1:]
+        if listOfLines[0].find("-----") >= 0: listOfLines = listOfLines[1:]
+        curStructure = {}
+        while len(listOfLines) > 0 and listOfLines[0].find(":") >= 0:
+            key, value = __getValuePairFromLine(listOfLines[0])
+            if key != None and value != None:
+                curStructure[key] = value
+            listOfLines = listOfLines[1:]
+        outStructure[curHeading] = curStructure
+    return outStructure
+
 
 #----------------------------------------------------------------------
 def __splitByBlanks(strLine, blankCount = 3):

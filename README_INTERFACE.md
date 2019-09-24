@@ -5,69 +5,81 @@ from PyNetsh.Interface import *
 ```
 
 ## Functions
-* enableInterface(strInterface, setEnabled=True):\
+* enableInterface(strInterface, setEnabled=True)\
     enables or disables specified interface\
     __strInterface:__ a string with the profile's name\
     __setEnabled:__ _[Optional]_ if true, sets the interface administrative state enabled\
     __throws__ NotAdminException if user is not administrator\
     __returns__ nothing
 
-* getInterfacesJSON():\
+* getInterfacesJSON()\
     reads the current status of the interfaces on the computer\
     __returns__ a JSON-string containing the interfaces
 
-* getInterfacesList():\
+* getInterfacesList()\
     reads the current status of the interfaces on the computer\
     __returns__ a list of strings containing the interfaces
 
 ### Httpstunnel
 
-* httpstunnel_configScript():\
+* httpstunnel_configScript()\
     gets the configuration script of the Httpstunnel\
     __returns__ a string
 
 ### IPv4
 
-* IPv4_configScript():\
+* IPv4_configScript()\
     gets the configuration script of the IPv4\
     __returns__ a string
 
+* IPv4_globalParameters()\
+    reads the global parameters encoded in JSON of the IPv4 \
+    __returns__ a JSON-string containing the parameters
+
 ### IPv6    
 
-* IPv6_configScript():\
+* IPv6_configScript()\
     gets the configuration script of the IPv6\
     __returns__ a string    
 
+* IPv6_globalParameters()\
+    reads the global parameters encoded in JSON of the IPv6 \
+    __returns__ a JSON-string containing the parameters
+
 ### IPv6to4
 
-* IPv6to4_configScript():\
+* IPv6to4_configScript()\
     gets the configuration script of the IPv6to4\
     __returns__ a string
 
 ### Isatap
 
-* isatap_configScript():\
+* isatap_configScript()\
     gets the configuration script of the isatap\
     __returns__ a string
 
 ### Portproxy
 
-* portproxy_configScript():\
+* portproxy_configScript()\
     gets the configuration script of the portproxy\
     __returns__ a string
 
 ### TCP
 
-* tcp_configScript():\
+* tcp_configScript()\
     gets the configuration script of the tcp protocol\
     __returns__ a string
 
+* tcp_globalParameters()\
+    reads the global parameters encoded in JSON of the tcp protocol \
+    __returns__ a JSON-string containing the parameters
+
 ### Teredo
 
-* Teredo_configScript():\
+* Teredo_configScript()\
     gets the configuration script of the Teredo Client\
     __returns__ a string
 
-* Teredo_showState():\
+* Teredo_showState()\
     reads the state of the Teredo-Client\
     __returns__ a JSON-string containing the state of the Teredo Client
