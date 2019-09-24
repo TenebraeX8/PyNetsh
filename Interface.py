@@ -64,7 +64,70 @@ def enableInterface(strInterface, setEnabled=True):
 
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
+#Section IPv6to4
+def IPv6to4_configScript():
+    '''
+    returns a string containing the configuration of the IPv6to4
+    '''
+    return __abstractConfigScript("6to4")
 
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section Httpstunnel
+def httpstunnel_configScript():
+    '''
+    returns a string containing the configuration of the Httpstunnel
+    '''
+    return __abstractConfigScript("httpstunnel")
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section IPv4
+def IPv4_configScript():
+    '''
+    returns a string containing the configuration of the IPv4
+    '''
+    return __abstractConfigScript("ipv4")
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section IPv6
+def IPv6_configScript():
+    '''
+    returns a string containing the configuration of the IPv6
+    '''
+    return __abstractConfigScript("ipv6")
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section Portproxy
+def portproxy_configScript():
+    '''
+    returns a string containing the configuration of the portproxy
+    '''
+    return __abstractConfigScript("portproxy")
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section tcp
+def tcp_configScript():
+    '''
+    returns a string containing the configuration of the tcp protocol
+    '''
+    return __abstractConfigScript("tcp")
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section Isatap
+def isatap_configScript():
+    '''
+    returns a string containing the configuration of the isatap
+    '''
+    return __abstractConfigScript("isatap")
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+#Section Teredo
 def Teredo_showState():
     '''
     returns a JSON-string with the state of the Teredo Client
@@ -81,8 +144,13 @@ def Teredo_configScript():
     '''
     returns a string containing the configuration of the Teredo Client
     '''
-    return execute("netsh interface teredo dump").strip()
+    return __abstractConfigScript("teredo")
 
+
+#----------------------------------------------------------------------
+#----------------------------------------------------------------------
+def __abstractConfigScript(strModule):
+    return execute("netsh interface " + strModule + " dump").strip()
 
 #----------------------------------------------------------------------
 def __splitByBlanks(strLine, blankCount = 3):
@@ -97,6 +165,3 @@ def __getValuePairFromLine(strLine):
     if len(splitter) == 2:
         return splitter[0].strip(), splitter[1].strip()
     else: return None, None
-
-
-print(Teredo_configScript())
