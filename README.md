@@ -1,6 +1,6 @@
 # PyNetsh
-A simple library for the most important functions of the Windows netshell. Backend, the Windows command line is called to execute these commands. This library is intended to mask out all the commands used to do simple stuff like disconnecting from a Wifi. It also parses the information output into JSON-encoded strings for better postprocessing.\
-\
+A simple library for the most important functions of the Windows netshell. Backend, the Windows command line is called to execute these commands. This library is intended to mask out all the commands used to do simple stuff like disconnecting from a Wifi. It also parses the information output into JSON-encoded strings for better postprocessing.
+
 If you did not work with json yet, please dont try to use methods like ```.find()```. Just use the python standard library json (```import json``` ) and convert it into a dictionary with ```json.loads()```
 
 ## Usage
